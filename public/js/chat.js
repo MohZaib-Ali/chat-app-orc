@@ -1,13 +1,13 @@
 const socket = io()
 
-const msgForm = document.querySelector('#msg-form')
+const msgForm = document.querySelector('#message-form')
 const msgFormInput = msgForm.querySelector('input')
 const msgFormButton = msgForm.querySelector('button')
 const sendLocationButton = document.querySelector('#send-location')
-const msgs = document.querySelector('#msgs')
+const msgs = document.querySelector('#messages')
 
-const msgTemplate = document.querySelector('#msg-template').innerHTML
-const locationmsgTemplate = document.querySelector('#location-msg-template').innerHTML
+const messageTemplate = document.querySelector('#message-template').innerHTML
+const locationMessageTemplate = document.querySelector('#location-message-template').innerHTML
 const sidebarTemplate = document.querySelector('#sidebar-template').innerHTML
 
 const { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true })
@@ -30,20 +30,20 @@ const autoscroll = () => {
     }
 }
 
-socket.on('msg', (msg) => {
+socket.on('message', (msg) => {
     console.log(msg)
-    const html = Mustache.render(msgTemplate, {
+    const html = Mustache.render(messageTemplate, {
         username: msg.username,
-        msg: msg.text,
+        message: msg.text,
         createdAt: moment(msg.createdAt).format('h:mm a')
     })
     msgs.insertAdjacentHTML('beforeend', html)
     autoscroll()
 })
 
-socket.on('locationmsg', (msg) => {
+socket.on('locationMessage', (msg) => {
     console.log(msg)
-    const html = Mustache.render(locationmsgTemplate, {
+    const html = Mustache.render(locationMessageTemplate, {
         username: msg.username,
         url: msg.url,
         createdAt: moment(msg.createdAt).format('h:mm a')
@@ -65,9 +65,9 @@ msgForm.addEventListener('submit', (e) => {
 
     msgFormButton.setAttribute('disabled', 'disabled')
 
-    const msg = e.target.elements.msg.value
+    const msg = e.target.elements.message.value
 
-    socket.emit('sendmsg', msg, (error) => {
+    socket.emit('sendMessage', msg, (error) => {
         msgFormButton.removeAttribute('disabled')
         msgFormInput.value = ''
         msgFormInput.focus()
